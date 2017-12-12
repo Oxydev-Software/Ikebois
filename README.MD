@@ -6,4 +6,4 @@
 - Cloner le projet : `git clone https://github.com/Oxydev-Software/Ikebois`
 
 - Installer les dépendances (une fois) : `yarn install`
-- Lancer le projet : `yarn start
+- Lancer le projet : `yarn start`
