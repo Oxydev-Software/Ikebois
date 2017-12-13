@@ -24,7 +24,7 @@ export default class ProductPage extends Component {
   }
 
   componentDidMount() {
-    return fetch('https://reactnativecode.000webhostapp.com/FruitsList.php')
+    return fetch('http://linkyu.alwaysdata.net/ikebois/list.php')
       .then(response => response.json())
       .then(responseJson => {
         let ds = new ListView.DataSource({
@@ -48,9 +48,13 @@ export default class ProductPage extends Component {
 
   SearchFilterFunction(text) {
     const newData = this.arrayholder.filter(function(item) {
-      const itemData = item.fruit_name.toUpperCase();
+      const itemDataName = item.name.toUpperCase();
+      const itemDataCode = item.code.toUpperCase();
       const textData = text.toUpperCase();
-      return itemData.indexOf(textData) > -1;
+      return (
+        itemDataName.indexOf(textData) > -1 ||
+        itemDataCode.indexOf(textData) > -1
+      );
     });
     this.setState({
       dataSource: this.state.dataSource.cloneWithRows(newData),
@@ -94,12 +98,10 @@ export default class ProductPage extends Component {
           dataSource={this.state.dataSource}
           renderSeparator={this.ListViewItemSeparator}
           renderRow={rowData => (
-            <TouchableWithoutFeedback
-              onPress={() => Alert.alert(rowData.fruit_name)}
-            >
+            <TouchableWithoutFeedback onPress={() => Alert.alert(rowData.name)}>
               <View style={styles.listViewItem}>
-                <Text>{rowData.fruit_name}</Text>
-                <Text>{rowData.fruit_number || 10}</Text>
+                <Text>{rowData.name}</Text>
+                <Text>{rowData.code}</Text>
               </View>
             </TouchableWithoutFeedback>
           )}
