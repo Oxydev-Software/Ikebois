@@ -5,13 +5,17 @@ import {
   Text,
   View,
   StyleSheet,
-  CheckBox,
   TextInput,
   Alert,
   TouchableWithoutFeedback
 } from 'react-native';
+import { STEP_PAGE } from './PAGES.js';
+import { styles } from './Styles.js';
 
 export default class ProductPage extends Component {
+  static navigationOptions = {
+    title: 'PRODUCT'
+  };
   constructor(props) {
     super(props);
 
@@ -75,6 +79,7 @@ export default class ProductPage extends Component {
   };
 
   render() {
+    const { navigate } = this.props.navigation;
     if (this.state.isLoading) {
       return (
         <View style={{ flex: 1, paddingTop: 20 }}>
@@ -85,7 +90,6 @@ export default class ProductPage extends Component {
 
     return (
       <View style={styles.MainContainer}>
-        <Text style={styles.title}>Product List</Text>
         <TextInput
           style={styles.TextInputStyleClass}
           onChangeText={text => this.SearchFilterFunction(text)}
@@ -98,7 +102,11 @@ export default class ProductPage extends Component {
           dataSource={this.state.dataSource}
           renderSeparator={this.ListViewItemSeparator}
           renderRow={rowData => (
-            <TouchableWithoutFeedback onPress={() => Alert.alert(rowData.name)}>
+            <TouchableWithoutFeedback
+              onPress={() =>
+                navigate(STEP_PAGE, { name: rowData.name, code: rowData.code })
+              }
+            >
               <View style={styles.listViewItem}>
                 <Text>{rowData.name}</Text>
                 <Text>{rowData.code}</Text>
@@ -112,35 +120,3 @@ export default class ProductPage extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  MainContainer: {
-    paddingTop: 20,
-    justifyContent: 'center',
-    flex: 1,
-    margin: 7
-  },
-  title: {
-    textAlign: 'center',
-    fontSize: 28
-  },
-  listViewItem: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    height: 30,
-    margin: 10
-  },
-  listViewItemText: {
-    fontSize: 18
-  },
-  TextInputStyleClass: {
-    margin: 20,
-    textAlign: 'center',
-    height: 40,
-    borderWidth: 1,
-    borderColor: '#009688',
-    borderRadius: 7,
-    backgroundColor: '#FFFFFF'
-  }
-});
