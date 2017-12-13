@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { Text, View } from 'react-native';
+import { Text, View, Alert } from 'react-native';
 import { styles } from './Styles.js';
 
-import { CheckBox } from 'react-native-elements';
+import { CheckBox, Button } from 'react-native-elements';
 
 export default class StepPage extends Component {
   constructor(props) {
@@ -52,32 +52,72 @@ export default class StepPage extends Component {
     title: 'STEPS'
   };
   render() {
-    const { code, name } = this.props.navigation.state.params;
-    const { type, weight, conform } = this.state.phases.PR;
+    const { code, name, id } = this.props.navigation.state.params;
+    const { phases } = this.state;
     return (
       <View>
         <Text style={styles.title}>
           {name} - {code}
         </Text>
-        <CheckBox
-          title={`${type} - ${weight}`}
+        {Object.keys(phases).map(key => {
+          return (
+            <CheckBox
+              key={key}
+              title={`${phases[key].type} - ${phases[key].weight} - ${key}`}
+              onPress={() => {
+                this.setState(previousState => getNewState(previousState, key));
+              }}
+              checked={phases[key].conform}
+            />
+          );
+        })}
+        <Button
+          title="VALIDER"
+          backgroundColor="#2767AC"
+          raised
           onPress={() => {
-            this.setState(previousState => getNewState(previousState));
+            let result = getResult(phases);
+            validateProduct(id, result);
+            Alert.alert(
+              isConform(result)
+                ? 'Le produit est marqué comme conforme.'
+                : 'Il faut arrêter la chaîne de production!'
+            );
           }}
-          checked={conform}
         />
       </View>
     );
   }
 }
 
-const getNewState = previousState => {
+const validateProduct = (id, result) => {
+  const ID_DU_PRODUIT = id;
+  const IS_CONFORM = isConform(result);
+  fetch(
+    `http://linkyu.alwaysdata.net/ikebois/list.php?id=${
+      ID_DU_PRODUIT
+    }&conforme=${IS_CONFORM}`
+  );
+};
+
+const isConform = result => (result > 0.85 ? 1 : 0);
+
+const getResult = phases => {
+  let result = 0;
+  Object.keys(phases).map(key => {
+    let phase = phases[key];
+    result += phase.conform ? phase.weight : 0;
+  });
+  return result / 5.95;
+};
+
+const getNewState = (previousState, key) => {
   return {
     phases: {
       ...previousState.phases,
-      PR: {
-        ...previousState.phases.PR,
-        conform: !previousState.phases.PR.conform
+      [key]: {
+        ...previousState.phases[key],
+        conform: !previousState.phases[key].conform
       }
     }
   };

@@ -104,7 +104,11 @@ export default class ProductPage extends Component {
           renderRow={rowData => (
             <TouchableWithoutFeedback
               onPress={() =>
-                navigate(STEP_PAGE, { name: rowData.name, code: rowData.code })
+                navigate(STEP_PAGE, {
+                  name: rowData.name,
+                  code: rowData.code,
+                  id: rowData.id
+                })
               }
             >
               <View style={styles.listViewItem}>
